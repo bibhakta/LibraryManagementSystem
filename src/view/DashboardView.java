@@ -1572,7 +1572,17 @@ public class DashboardView extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btndeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btndeleteActionPerformed
-
+           conn = MyConnection.dbconnect();
+            try {
+            stmt = conn.createStatement();
+            String sql = "DELETE FROM users WHERE user_id='" + txtID.getText() + "'";
+            stmt.executeUpdate(sql);
+            JOptionPane.showMessageDialog(rootPane, "Data Deleted Successfully");
+            refreshTab();
+            } 
+            catch (SQLException e) {
+    // Handle any exceptions here
+}
     }//GEN-LAST:event_btndeleteActionPerformed
 
     private void btnupdateMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnupdateMouseClicked
