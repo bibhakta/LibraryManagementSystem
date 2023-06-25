@@ -10,33 +10,40 @@ import java.sql.DriverManager;
 import model.*;
 import view.*;
 import java.sql.*;
+import java.awt.event.*;
 
 /**
  *
  * @author Bibhakta lamsal
  */
 public class LoginController {
-     LoginModel model;
+    LoginModel model;
     LoginView view;
     ResultSet rs;
     Statement stmt;
+    private String errorMessage;
     public LoginController(LoginView view)
     {
         this.view=view;
-        new LoginListener().actionPerformed();
+        view.addLoginListener(new LoginListener());
         
     }
-    class LoginListener
+    class LoginListener  implements ActionListener 
     {
-        public void actionPerformed() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             try
             {
                 model=view.getUser();
+                 if (validateLogin(model)) {
                 if(checkUser(model))
                 {
                     view.setMessage("Login Successfully");
+                        Dash_boardView dv = new Dash_boardView();
+                        dv.setVisible(true);
+                         view.dispose();
                 }
-                else
+                 }else
                 {
                     view.setMessage("Invalid username or password");
                     
@@ -44,10 +51,25 @@ public class LoginController {
             }
             catch(Exception e1)
             {
-                
+                System.out.println(e1.getMessage());
             }
 
         }
+              public boolean validateLogin(LoginModel lModel) {
+                // Validate username
+                if (lModel.getUsername().isEmpty()) {
+                    errorMessage = "Username is required.";
+                    return false;
+                }
+                if (lModel.getPassword().isEmpty()) {
+                    errorMessage = "Password and confirm password are required.";
+                    return false;
+                }
+                // All fields are valid
+                errorMessage = null;
+                return true;
+            }
+    }
         public boolean checkUser(LoginModel user) throws Exception
         {
              Class.forName("com.mysql.cj.jdbc.Driver");
@@ -65,7 +87,7 @@ public class LoginController {
             
           
           }
-          catch(Exception e2)
+          catch(SQLException e2)
           {
               System.out.println(e2.getMessage());
           }         
@@ -73,7 +95,4 @@ public class LoginController {
             return false;
         }
         
-    }
-    
-    
 }
